@@ -1,0 +1,72 @@
+# Mensagem de boas-vindas (exigência de código 6/6).
+print('Bem-vindo(a) a Sorveteria do Alison Paixão!')
+print('|******************************** Cardápio **************************************|')
+print('|N° de Bolas | Sabor Tradicional (tr) | Sabor Premium (pr) | Sabor Especial (es) |')
+print('|     1      |        R$ 6,00         |       R$ 7,00      |       R$ 8,00       |')
+print('|     2      |        R$ 10,00        |       R$ 12,00     |       R$ 14,00      |')
+print('|     3      |        R$ 14,00        |       R$ 17,00     |       R$ 20,00      |')
+print('|____________|________________________|____________________|_____________________|', '\n')
+
+# Variável para armazenar o valor total.
+total = 0
+
+# Utilizando o laço de repetição while (exigência de código 5/6).
+while True:
+  try:
+    # Entrada do sabor (exigência de código 1/6).
+    sabor = input('Digite o sabor do sorvete (tr, pr, es): ')
+    sabor = sabor.lower()
+
+    # Verificação de erro ao digitar o sabor do sorvete (exigência de código 3/6).
+    if sabor != 'tr' and sabor != 'pr' and sabor != 'es':
+        print('Sabor de Sorvete Inválido.')
+        continue # Utilizando o continue em um laço de repetição (exigência de código 5/6). 
+
+    # Entrada da quantidade de Bolas de Sorvete (exigência de código 1/6).
+    quantidade = int(input('Digite o número de bolas de sorvete (1, 2 ou 3): '))
+
+    # Verificação de erro ao digitar a quantidade de Bolas de Sorvete (exigência de código 2/6).
+    if quantidade != 1 and quantidade != 2 and quantidade != 3:
+        print('Quantidade de Bolas de Sorvete Inválida.')
+        continue # Utilizando o continue em um laço de repetição (exigência de código 5/6).
+
+    # Cálculo do valor do sorvete.
+    if quantidade == 1:
+        if sabor == 'tr':
+            total += 6
+        elif sabor == 'pr':
+            total += 7
+        elif sabor == 'es':
+            total += 8
+    elif quantidade == 2:
+        if sabor == 'tr':
+            total += 10
+        elif sabor == 'pr':
+            total += 12
+        elif sabor == 'es':
+            total += 14
+    elif quantidade == 3:
+        if sabor == 'tr':
+            total += 14
+        elif sabor == 'pr':
+            total += 17
+        elif sabor == 'es':
+            total += 20
+
+    # Valor dos pedidos até o momento da operação.
+    print('Valor até o momento é de: R$ {}'.format(total))
+
+    # Perguntar se o cliente deseja pedir mais alguma coisa (exigência de código 4/6).
+    resposta = input('Deseja pedir mais alguma coisa? \n''Digite "n" para sair ou qualquer outra tecla para continuar: ')
+    resposta = resposta.lower()
+
+    # Verificação da resposta.
+    if resposta == 'n':
+      break # Utilizando o break em um laço de repetição (exigência de código 5/6).
+
+  # Verificação de erro ao digitar um valor não numérico a quantidade de Bolas de Sorvete.
+  except ValueError:
+    print('Quantidade de Bolas de Sorvete Inválida.') 
+
+# Saída de console com o valor total.
+print('O valor total do seu pedido é de R$ {}'.format(total))
