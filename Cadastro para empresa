@@ -1,0 +1,112 @@
+# Print de boas-vindas (exigência de código 7/7).
+print('Bem-vindo(a) ao Gerenciamento de Colaboradores do Alison Paixão')
+
+# Lista vazia para armazenar os colaboradores e variável id (exigência de código 1/7).
+lista_colaboradores = []
+id_global = 1
+
+# Função para cadastrar um colaborador (exigência de código 2/7).
+def cadastrar_colaborador(id):
+    print('*'*84)
+    print('-'*28,'Menu Cadastar Colaborador','-'*29)
+    global id_global
+    print('Id do Colaborador {}' .format(id_global))
+    nome = input('Digite o Nome do colaborador: ')
+    setor = input('Digite o Setor do colaborador: ')
+    salario = float(input('Digite o Salário do colaborador: '))
+
+    # Dicionário dentro da lista de colaboradores (exigência de código 6/7).
+    dicionario_colaborador = {
+        'Id': id,
+        'Nome': nome,
+        'Setor': setor,
+        'Salário': salario
+    }
+
+    lista_colaboradores.append(dicionario_colaborador.copy())
+    id_global += 1
+    print('Colaborador cadastrado com sucesso!\n')
+
+# Função para consultar colaboradores (exigência de código 3/7).
+def consultar_colaborador():
+    print('*'*84)
+    print('-'*28,'Menu Consultar Colaborador','-'*28)
+    opcao = int(input('Escolha uma opção:\n' + 
+                      '1. Consultar Todos\n' +
+                      '2. Consultar por Id\n' + 
+                      '3. Consultar por Setor\n' + 
+                      '4. Retornar ao menu\n'+
+                      'Opção Desejada: '))
+
+    if opcao == 1:
+        print('\n','-'*30,'Todos os Colaboradores','-'*29,'\n')
+        for colaborador in lista_colaboradores:
+          print('_'*25)
+          for key, value in colaborador.items():
+            print('{}: {}'.format(key, value))
+          print('_'*25)
+
+    elif opcao == 2:
+        id = int(input('Digite o ID do colaborador: '))
+        print('\n','-'*30,'Colaborador Específico','-'*29,'\n')
+        for colaborador in lista_colaboradores:
+            if colaborador['Id'] == id:
+                print('_'*25)
+                for key, value in colaborador.items():
+                  print('{}: {}'.format(key, value))
+                print('_'*25)
+                return
+        print('Colaborador não encontrado!')
+
+    elif opcao == 3:
+        setor = input('Digite o Setor: ')
+        print('\n','-'*30,'Colaboradores do Setor','-'*29,'\n')
+        for colaborador in lista_colaboradores:
+            if colaborador['Setor'] == setor:
+              print('_'*25)
+              for key, value in colaborador.items():
+                print('{}: {}'.format(key, value))
+              print('_'*25)
+
+    elif opcao == 4:
+        return
+    else:
+        print('Opção inválida!\n')
+
+# Função para remover um colaborador (exigência de código 4/7).
+def remover_colaborador():
+    print('*'*84)
+    print('-'*28,'Menu Remover Colaborador','-'*30,'\n')
+    id = int(input('Digite o ID do colaborador a ser removido: '))
+    for colaborador in lista_colaboradores:
+        if colaborador['Id'] == id:
+            lista_colaboradores.remove(colaborador)
+            print('Colaborador removido com sucesso!')
+            return
+    print('Colaborador não encontrado!')
+
+# Estrutura de menu principal (exigência de código 5/7).
+while True:
+  try:
+    print('*'*84)
+    print('-'*33,' Menu Principal ','-'*33)
+    opcao = int(input('Escolha uma opção:\n' +
+                      '1. Cadastrar Colaborador\n' + 
+                      '2. Consultar Colaborador\n' +
+                      '3. Remover Colaborador\n' + 
+                      '4. Encerrar Programa\n' +
+                      'Opção Desejada: '))
+
+    if opcao == 1:
+        cadastrar_colaborador(id_global)
+    elif opcao == 2:
+        consultar_colaborador()
+    elif opcao == 3:
+        remover_colaborador()
+    elif opcao == 4:
+        print('Encerrando o programa...')
+        break
+    else:
+        print('Opção inválida!')
+  except ValueError:
+    print('Nos campos "Opção Desejada", "Id do colaborador" e "Salário" os valores são numéricos!')
