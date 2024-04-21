@@ -1,0 +1,27 @@
+# Mensagem de boas-vindas (exigência de código 4/4).
+print('Bem-vindo(a) a loja do Alison Paixão!')
+
+# Entrada do valor unitário e quantidade do produto (exigência de código 1/4).
+unitario = float(input('Digite o valor do produto: R$ '))
+quantidade = int(input('Digite a quantidade do produto: '))
+
+# Cálculo do valor total.
+sem_desconto = unitario * quantidade
+
+# Aplicação de if, elif e else para calcular o desconto (exigência de código 3/4).
+if quantidade < 200:
+    desconto = 0
+elif quantidade < 1000:
+    desconto = 5
+elif quantidade < 2000:
+    desconto = 10
+else:
+    desconto = 15
+
+# Cálculo do valor com desconto.
+valor_desconto = sem_desconto * desconto / 100
+com_desconto = sem_desconto - valor_desconto
+
+# Print da saída de console com o pedido e desconto (exigência de código 2/4).
+print('Valor sem desconto: R$ {}' .format(sem_desconto))
+print('Valor com desconto: R$ {}' .format(com_desconto))
