@@ -1,0 +1,222 @@
+import sys
+import json
+import tkinter as tk
+from tkinter import messagebox, simpledialog
+
+# Lista vazia para armazenar os colaboradores e variável id.
+lista_colaboradores = []
+id_global = 1
+arquivo_json = 'colaboradores.json'
+
+
+# Função para carregar os colaboradores do arquivo JSON
+def carregar_colaboradores():
+    global lista_colaboradores, id_global
+    try:
+        with open(arquivo_json, 'r') as file:
+            dados = json.load(file)
+            lista_colaboradores = dados['colaboradores']
+            id_global = dados['id_global']
+    except (FileNotFoundError, json.JSONDecodeError):
+        lista_colaboradores = []
+        id_global = 1
+
+
+# Função para salvar os colaboradores no arquivo JSON
+def salvar_colaboradores():
+    with open(arquivo_json, 'w') as file:
+        dados = {
+            'colaboradores': lista_colaboradores,
+            'id_global': id_global
+        }
+        json.dump(dados, file)
+
+
+# Função para cadastrar um colaborador
+def cadastrar_colaborador():
+    def cancelar():
+        cadastro_window.destroy()
+
+    global id_global  # Garantir que id_global é tratada como global
+
+    cadastro_window = tk.Toplevel(root)
+    cadastro_window.title("Cadastrar Colaborador")
+    cadastro_window.geometry("300x350")
+
+    tk.Label(cadastro_window, text="Nome do Colaborador:").pack(pady=5)
+    nome_entry = tk.Entry(cadastro_window)
+    nome_entry.pack(pady=5)
+
+    tk.Label(cadastro_window, text="Bairro do Colaborador:").pack(pady=5)
+    bairro_entry = tk.Entry(cadastro_window)
+    bairro_entry.pack(pady=5)
+
+    tk.Label(cadastro_window, text="CPF do Colaborador:").pack(pady=5)
+    cpf_entry = tk.Entry(cadastro_window)
+    cpf_entry.pack(pady=5)
+
+    tk.Label(cadastro_window, text="Telefone do Colaborador:").pack(pady=5)
+    telefone_entry = tk.Entry(cadastro_window)
+    telefone_entry.pack(pady=5)
+
+    def salvar():
+        global id_global  # Garantir que id_global é tratada como global
+        nome = nome_entry.get()
+        bairro = bairro_entry.get().lower()
+        cpf = cpf_entry.get()
+        telefone = telefone_entry.get()
+
+        if not nome:
+            messagebox.showerror("Erro", "O nome não pode ser vazio. Esse campo precisa ser preenchido.")
+            return
+        if not bairro:
+            messagebox.showerror("Erro", "O bairro não pode ser vazio. Esse campo precisa ser preenchido.")
+            return
+        if not cpf or len(cpf) != 11 or not cpf.isdigit():
+            messagebox.showerror("Erro", "CPF inválido. Deve ter 11 dígitos numéricos.")
+            return
+        if any(colaborador['CPF'] == cpf for colaborador in lista_colaboradores):
+            messagebox.showerror("Erro", "Este CPF já está cadastrado.")
+            return
+        if not telefone or len(telefone) != 11 or not telefone.isdigit():
+            messagebox.showerror("Erro", "Telefone inválido. Deve ter 11 dígitos numéricos.")
+            return
+
+        colaborador = {
+            'Id': id_global,
+            'Nome': nome,
+            'Bairro': bairro,
+            'CPF': cpf,
+            'Telefone': telefone
+        }
+
+        lista_colaboradores.append(colaborador)
+        id_global += 1
+        salvar_colaboradores()
+        messagebox.showinfo("Sucesso", "Colaborador cadastrado com sucesso!")
+        cadastro_window.destroy()
+
+    tk.Button(cadastro_window, text="Salvar", command=salvar, width=25).pack(pady=5)
+    tk.Button(cadastro_window, text="Cancelar", command=cancelar, width=25).pack(pady=5)
+
+
+# Funções de consulta individuais
+def consultar_todos():
+    resultado = "\nTodos os Colaboradores:\n"
+    for colaborador in lista_colaboradores:
+        telefone = colaborador.get('Telefone', 'N/A')
+        resultado += f"\nID: {colaborador['Id']},\n Nome: {colaborador['Nome']},\n Bairro: {colaborador['Bairro']},\n CPF: {colaborador['CPF']},\n Telefone: {telefone}\n"
+    messagebox.showinfo("Resultado", resultado)
+
+
+def consultar_por_id():
+    id = simpledialog.askinteger("Consulta por ID", "Digite o ID do colaborador:")
+    if not id:
+        return
+    for colaborador in lista_colaboradores:
+        if colaborador['Id'] == id:
+            telefone = colaborador.get('Telefone', 'N/A')
+            resultado = f"ID: {colaborador['Id']},\n Nome: {colaborador['Nome']},\n Bairro: {colaborador['Bairro']},\n CPF: {colaborador['CPF']},\n Telefone: {telefone}\n"
+            messagebox.showinfo("Resultado", resultado)
+            return
+    messagebox.showerror("Erro", "Colaborador não encontrado!")
+
+
+def consultar_por_bairro():
+    bairro = simpledialog.askstring("Consulta por Bairro", "Digite o Bairro:")
+    if not bairro:
+        return
+    bairro = bairro.lower()
+    resultado = f"\nColaboradores do Bairro '{bairro}':\n"
+    for colaborador in lista_colaboradores:
+        if colaborador['Bairro'] == bairro:
+            telefone = colaborador.get('Telefone', 'N/A')
+            resultado += f"\nID: {colaborador['Id']},\n Nome: {colaborador['Nome']},\n CPF: {colaborador['CPF']},\n Telefone: {telefone}\n"
+    messagebox.showinfo("Resultado", resultado)
+
+
+def consultar_por_cpf():
+    cpf = simpledialog.askstring("Consulta por CPF", "Digite o CPF do colaborador:")
+    if not cpf or len(cpf) != 11 or not cpf.isdigit():  # Corrigido aqui
+        messagebox.showerror("Erro", "CPF inválido. Deve ter 11 dígitos numéricos.")
+        return
+    for colaborador in lista_colaboradores:
+        if colaborador['CPF'] == cpf:
+            telefone = colaborador.get('Telefone', 'N/A')
+            resultado = f"ID: {colaborador['Id']},\n Nome: {colaborador['Nome']},\n Bairro: {colaborador['Bairro']},\n CPF: {colaborador['CPF']},\n Telefone: {telefone}\n"
+            messagebox.showinfo("Resultado", resultado)
+            return
+    messagebox.showerror("Erro", "Colaborador não encontrado!")
+
+
+# Função para abrir a janela de consulta
+def abrir_janela_consulta():
+    consulta_window = tk.Toplevel(root)
+    consulta_window.title("Consultar Colaborador")
+    consulta_window.geometry("300x250")
+
+    label = tk.Label(consulta_window, text="Escolha uma opção de consulta:", font=("Arial", 10, "bold"))
+    label.pack(pady=10)
+
+    botao_todos = tk.Button(consulta_window, text="Consultar Todos", command=consultar_todos, width=25)
+    botao_todos.pack(pady=5)
+
+    botao_id = tk.Button(consulta_window, text="Consultar por ID", command=consultar_por_id, width=25)
+    botao_id.pack(pady=5)
+
+    botao_bairro = tk.Button(consulta_window, text="Consultar por Bairro", command=consultar_por_bairro, width=25)
+    botao_bairro.pack(pady=5)
+
+    botao_cpf = tk.Button(consulta_window, text="Consultar por CPF", command=consultar_por_cpf, width=25)
+    botao_cpf.pack(pady=5)
+
+
+# Função para remover um colaborador
+def remover_colaborador():
+    id = simpledialog.askinteger("Remover", "Digite o ID do colaborador a ser removido:")
+    if not id:
+        return
+    for colaborador in lista_colaboradores:
+        if colaborador['Id'] == id:
+            lista_colaboradores.remove(colaborador)
+            salvar_colaboradores()
+            messagebox.showinfo("Sucesso", "Colaborador removido com sucesso!")
+            return
+    messagebox.showerror("Erro", "Colaborador não encontrado!")
+
+
+# Função para encerrar o programa
+def encerrar_programa():
+    messagebox.showinfo("Encerrando", "Encerrando o Programa...")
+    salvar_colaboradores()
+    root.quit()
+
+
+# Janela principal do Tkinter
+root = tk.Tk()
+root.title("Gerenciamento de Colaboradores")
+root.geometry("400x300")
+
+# Layout e widgets
+label = tk.Label(root, text="Gerenciamento de Colaboradores na Área de Reciclagem de Jarinu-SP",
+                 font=("Arial", 10, "bold"), wraplength=380, justify="center")
+label.pack(pady=30)
+
+# Botões do menu principal
+botao_cadastrar = tk.Button(root, text="Cadastrar Colaborador", command=cadastrar_colaborador, width=30)
+botao_cadastrar.pack(pady=5)
+
+botao_consultar = tk.Button(root, text="Consultar Colaborador", command=abrir_janela_consulta, width=30)
+botao_consultar.pack(pady=5)
+
+botao_remover = tk.Button(root, text="Remover Colaborador", command=remover_colaborador, width=30)
+botao_remover.pack(pady=5)
+
+botao_encerrar = tk.Button(root, text="Encerrar Programa", command=encerrar_programa, width=30)
+botao_encerrar.pack(pady=20)
+
+# Carregar dados ao iniciar o programa
+carregar_colaboradores()
+
+# Mostrar a janela
+root.mainloop()
